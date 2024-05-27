@@ -1,1 +1,7 @@
-<div class="flex-grow"><h1>Body</h1></div>
+<div class="flex-grow">
+  <div *ngIf="this.router.url !== '/'">
+    <router-outlet />
+  </div>
+
+  <div *ngIf="this.router.url === '/'">Body</div>
+</div>

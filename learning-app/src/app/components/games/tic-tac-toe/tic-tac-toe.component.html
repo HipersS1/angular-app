@@ -1,1 +1,48 @@
-<p>tic-tac-toe works!</p>
+<div class="size-full flex flex-col justify-center">
+  <!-- Timer -->
+  <app-timer
+    class="w-full flex justify-center"
+    [timerStartValue]="5"
+    [timerStartEvent]="countDownStartEvent"
+    (timerFinished)="finishGame()"
+  ></app-timer>
+
+  <!-- Game Wwindow -->
+  <div class="flex justify-center my-5">
+    <div
+      class="grid grid-cols-3 grid-rows-3 gap-1 w-1/2 justify-items-center max-w-lg size-80 border-double border-2 border-sky-500"
+    >
+      <button
+        *ngFor="let button of playGroundSpaces; index as i"
+        id="{{ i }}"
+        class="w-full bg-slate-100 border-solid border-2 border-blue-300"
+        (click)="selectPlayBox(i)"
+      >
+        {{ playGroundSpaces[i] }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="w-full flex justify-center my-5">
+    <p-buttonGroup>
+      <p-button
+        pButton
+        label="Start Game"
+        severity="success"
+        rounded="true"
+        size="small"
+        (onClick)="startGame()"
+        [disabled]="isStartGameButtonDisabled"
+      />
+
+      <p-button
+        pButton
+        label="Reset"
+        severity="danger"
+        size="small"
+        rounded="true"
+      />
+    </p-buttonGroup>
+  </div>
+</div>

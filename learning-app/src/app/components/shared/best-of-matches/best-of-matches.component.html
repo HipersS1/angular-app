@@ -1,0 +1,30 @@
+<div class="w-full flex justify-center my-5">
+  <p-toast />
+  <p-confirmDialog
+    closeOnEscape="true"
+    acceptLabel="Start Game"
+    rejectVisible="false"
+    acceptButtonStyleClass="mx-2"
+  >
+    <ng-template pTemplate="message" let-message>
+      <div
+        class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border"
+      >
+        <i class="pi pi-exclamation-circle text-6xl text-primary-500"></i>
+        <p>{{ message.message }}</p>
+      </div>
+    </ng-template>
+  </p-confirmDialog>
+
+  <p-buttonGroup>
+    <p-button
+      pButton
+      *ngFor="let item of values"
+      label="best of {{ item }}"
+      severity="secondary"
+      rounded="true"
+      size="small"
+      (onClick)="modeClicked(item, $event)"
+    />
+  </p-buttonGroup>
+</div>

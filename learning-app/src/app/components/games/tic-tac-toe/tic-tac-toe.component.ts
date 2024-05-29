@@ -1,15 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { TimerComponent } from '../../shared/timer/timer.component';
 import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
+import { BestOfMatchesComponent } from '../../shared/best-of-matches/best-of-matches.component';
+import { GameHeaderComponent } from '../../shared/game-header/game-header.component';
 
 type PlayGroundSymbol = 'X' | 'O';
 
 @Component({
   selector: 'app-tic-tac-toe',
   standalone: true,
-  imports: [CommonModule, TimerComponent, ButtonModule, ButtonGroupModule],
+  imports: [
+    CommonModule,
+    TimerComponent,
+    ButtonModule,
+    ButtonGroupModule,
+    BestOfMatchesComponent,
+    GameHeaderComponent,
+  ],
   templateUrl: './tic-tac-toe.component.html',
   styleUrl: './tic-tac-toe.component.scss',
 })
@@ -28,18 +37,32 @@ export class TicTacToeComponent {
     [2, 5, 8],
   ];
 
+  // Components communication
+  isGameVisible: boolean = false;
+  maxRounds: number = 0;
+
+  // Game logic
   isStartGameButtonDisabled: boolean = false;
+  isPlayGroundDisabled: boolean = true;
   isNextPlayerX: boolean = true;
+
+  isPlayGroundVisible(event: boolean) {
+    console.log(event);
+    this.isGameVisible = event;
+  }
 
   startGame() {
     console.log('Game started');
     this.countDownStartEvent.emit();
     this.isStartGameButtonDisabled = true;
+    this.isPlayGroundDisabled = false;
   }
 
   finishGame() {
     console.log('Game finished');
+    // this.resetPlayGround();
     this.isStartGameButtonDisabled = false;
+    this.isPlayGroundDisabled = true;
   }
 
   selectPlayBox(i: number) {
@@ -59,7 +82,7 @@ export class TicTacToeComponent {
       const currentWinningLine = this.playGroundWinPositions[index];
 
       if (this.playGroundSpaces[currentWinningLine[0]] === null) {
-        return;
+        continue;
       }
 
       if (
@@ -71,5 +94,9 @@ export class TicTacToeComponent {
         console.log(`Player ${this.getCurrentPlayer()} won the game`);
       }
     }
+  }
+
+  resetPlayGround() {
+    this.playGroundSpaces = new Array(9).fill(null);
   }
 }

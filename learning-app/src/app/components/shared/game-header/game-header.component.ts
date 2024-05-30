@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { PlayGroundSymbol } from '../../../types';
 
 @Component({
   selector: 'app-game-header',
@@ -8,7 +9,7 @@ import { Component, Input } from '@angular/core';
   styleUrl: './game-header.component.scss',
 })
 export class GameHeaderComponent {
-  @Input() currentPlayer: string = '';
+  @Input() currentPlayer!: PlayGroundSymbol;
   @Input() currentRound!: number;
   @Input() maxRound!: number;
 }

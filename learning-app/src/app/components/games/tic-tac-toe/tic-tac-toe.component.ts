@@ -5,8 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
 import { BestOfMatchesComponent } from '../../shared/best-of-matches/best-of-matches.component';
 import { GameHeaderComponent } from '../../shared/game-header/game-header.component';
-
-type PlayGroundSymbol = 'X' | 'O';
+import { GameState, PlayGroundSymbol } from '../../../types';
+import { GameFooterComponent } from '../../shared/game-footer/game-footer.component';
 
 @Component({
   selector: 'app-tic-tac-toe',
@@ -18,13 +18,12 @@ type PlayGroundSymbol = 'X' | 'O';
     ButtonGroupModule,
     BestOfMatchesComponent,
     GameHeaderComponent,
+    GameFooterComponent,
   ],
   templateUrl: './tic-tac-toe.component.html',
   styleUrl: './tic-tac-toe.component.scss',
 })
 export class TicTacToeComponent {
-  @Output() countDownStartEvent: EventEmitter<void> = new EventEmitter<void>();
-
   playGroundSpaces: PlayGroundSymbol[] = new Array(9).fill(null);
   playGroundWinPositions: number[][] = [
     [0, 1, 2],
@@ -39,42 +38,45 @@ export class TicTacToeComponent {
 
   // Components communication
   isGameVisible: boolean = false;
+  currentRound: number = 0;
   maxRounds: number = 0;
+  winningMessage: string = '';
+  nextState!: GameState;
 
   // Game logic
-  isStartGameButtonDisabled: boolean = false;
-  isPlayGroundDisabled: boolean = true;
   isNextPlayerX: boolean = true;
+  isPlayGroundDisabled: boolean = true;
 
-  isPlayGroundVisible(event: boolean) {
-    console.log(event);
+  starNewGame(event: boolean) {
     this.isGameVisible = event;
+    this.resetPlayGround();
   }
 
-  startGame() {
-    console.log('Game started');
-    this.countDownStartEvent.emit();
-    this.isStartGameButtonDisabled = true;
+  resetPlayGround() {
+    this.playGroundSpaces = new Array(9).fill(null);
+    this.isNextPlayerX = true;
     this.isPlayGroundDisabled = false;
+    this.currentRound = 1;
+    this.winningMessage = '';
   }
 
-  finishGame() {
-    console.log('Game finished');
-    // this.resetPlayGround();
-    this.isStartGameButtonDisabled = false;
-    this.isPlayGroundDisabled = true;
+  nextPlayGround() {
+    this.playGroundSpaces = new Array(9).fill(null);
+    this.isPlayGroundDisabled = false;
+    this.currentRound++;
+    this.winningMessage = '';
   }
 
   selectPlayBox(i: number) {
+    if (this.playGroundSpaces[i]) {
+      return;
+    }
+
     this.playGroundSpaces[i] = this.getCurrentPlayer();
 
     this.checkWinningCondition();
 
     this.isNextPlayerX = !this.isNextPlayerX;
-  }
-
-  getCurrentPlayer(): PlayGroundSymbol {
-    return this.isNextPlayerX ? 'X' : 'O';
   }
 
   checkWinningCondition() {
@@ -91,12 +93,40 @@ export class TicTacToeComponent {
         this.playGroundSpaces[currentWinningLine[0]] ===
           this.playGroundSpaces[currentWinningLine[2]]
       ) {
-        console.log(`Player ${this.getCurrentPlayer()} won the game`);
+        this.isPlayGroundDisabled = true;
+        this.winningMessage = `Player ${this.getCurrentPlayer()} won`;
+        this.getNextRoundState();
       }
+    }
+
+    if (this.playGroundSpaces.every((pgs) => pgs)) {
+      this.winningMessage = 'Players tied';
     }
   }
 
-  resetPlayGround() {
-    this.playGroundSpaces = new Array(9).fill(null);
+  setNextState($event: GameState) {
+    switch ($event) {
+      case GameState.StartNewGame:
+        this.resetPlayGround();
+        break;
+      case GameState.NextGame:
+        this.nextPlayGround();
+        break;
+      default:
+        console.log('Not good');
+        break;
+    }
+  }
+
+  getCurrentPlayer(): PlayGroundSymbol {
+    return this.isNextPlayerX ? 'X' : 'O';
+  }
+
+  getNextRoundState() {
+    if (this.currentRound == this.maxRounds) {
+      this.nextState = GameState.StartNewGame;
+    } else {
+      this.nextState = GameState.NextGame;
+    }
   }
 }

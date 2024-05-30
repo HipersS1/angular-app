@@ -1,0 +1,10 @@
+<div *ngIf="winningMessage" class="flex flex-col items-center">
+  <h1 class="text-2xl my-2">{{ winningMessage }}</h1>
+  <p-button
+    pButton
+    label="{{ nextState }}"
+    rounded="true"
+    severity="info"
+    (click)="sendNextState()"
+  ></p-button>
+</div>

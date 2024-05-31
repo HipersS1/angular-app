@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { TimerComponent } from '../../shared/timer/timer.component';
 import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
@@ -99,7 +99,10 @@ export class TicTacToeComponent {
       }
     }
 
-    if (this.playGroundSpaces.every((pgs) => pgs)) {
+    if (
+      !this.isPlayGroundDisabled &&
+      this.playGroundSpaces.every((pgs) => pgs)
+    ) {
       this.winningMessage = 'Players tied';
     }
   }

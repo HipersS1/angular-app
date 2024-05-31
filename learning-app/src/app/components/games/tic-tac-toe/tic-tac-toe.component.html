@@ -56,6 +56,9 @@
     </div>
   </div>
 
+  <app-round-history *ngIf="maxRounds > 1" [events]="roundHistory">
+  </app-round-history>
+
   <app-game-footer
     [winningMessage]="winningMessage"
     [nextState]="nextState"

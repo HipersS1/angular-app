@@ -7,6 +7,8 @@ import { BestOfMatchesComponent } from '../../shared/best-of-matches/best-of-mat
 import { GameHeaderComponent } from '../../shared/game-header/game-header.component';
 import { GameState, PlayGroundSymbol } from '../../../types';
 import { GameFooterComponent } from '../../shared/game-footer/game-footer.component';
+import { TimelineModule } from 'primeng/timeline';
+import { RoundHistoryComponent } from '../../shared/round-history/round-history.component';
 
 @Component({
   selector: 'app-tic-tac-toe',
@@ -19,6 +21,8 @@ import { GameFooterComponent } from '../../shared/game-footer/game-footer.compon
     BestOfMatchesComponent,
     GameHeaderComponent,
     GameFooterComponent,
+    TimelineModule,
+    RoundHistoryComponent,
   ],
   templateUrl: './tic-tac-toe.component.html',
   styleUrl: './tic-tac-toe.component.scss',
@@ -46,6 +50,7 @@ export class TicTacToeComponent {
   // Game logic
   isNextPlayerX: boolean = true;
   isPlayGroundDisabled: boolean = true;
+  roundHistory!: string[];
 
   starNewGame(event: boolean) {
     this.isGameVisible = event;
@@ -54,6 +59,7 @@ export class TicTacToeComponent {
 
   resetPlayGround() {
     this.playGroundSpaces = new Array(9).fill(null);
+    this.roundHistory = new Array(this.maxRounds).fill('');
     this.isNextPlayerX = true;
     this.isPlayGroundDisabled = false;
     this.currentRound = 1;
@@ -95,6 +101,7 @@ export class TicTacToeComponent {
       ) {
         this.isPlayGroundDisabled = true;
         this.winningMessage = `Player ${this.getCurrentPlayer()} won`;
+        this.roundHistory[this.currentRound - 1] = this.getCurrentPlayer();
         this.getNextRoundState();
       }
     }
@@ -104,6 +111,7 @@ export class TicTacToeComponent {
       this.playGroundSpaces.every((pgs) => pgs)
     ) {
       this.winningMessage = 'Players tied';
+      this.roundHistory[this.currentRound - 1] = 'Tie';
     }
   }
 

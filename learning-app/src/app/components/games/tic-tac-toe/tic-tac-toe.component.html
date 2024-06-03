@@ -7,29 +7,6 @@
     [(numberOfRounds)]="maxRounds"
   ></app-best-of-matches>
 
-  <!-- Buttons -->
-  <!-- <div class="w-full flex justify-center my-5">
-    <p-buttonGroup>
-      <p-button
-        pButton
-        label="Start Game"
-        severity="success"
-        rounded="true"
-        size="small"
-        (onClick)="startGame()"
-        [disabled]="isStartGameButtonDisabled"
-      />
-    </p-buttonGroup>
-  </div> -->
-
-  <!-- Timer -->
-  <!-- <app-timer
-    class="w-full flex justify-center"a
-    [timerStartValue]="5"
-    [timerStartEvent]="countDownStartEvent"
-    (timerFinished)="finishGame()"
-  ></app-timer> -->
-
   <!-- Game Window -->
   <div class="flex flex-col items-center my-5">
     <app-game-header
@@ -60,7 +37,8 @@
   </app-round-history>
 
   <app-game-footer
-    [winningMessage]="winningMessage"
+    [primaryMessage]="primaryMessage"
+    [secondaryMessage]="secondaryMessage"
     [nextState]="nextState"
     (nextStateEvent)="setNextState($event)"
   ></app-game-footer>

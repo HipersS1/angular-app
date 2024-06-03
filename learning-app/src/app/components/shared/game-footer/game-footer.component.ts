@@ -12,7 +12,8 @@ import { GameState } from '../../../types';
 })
 export class GameFooterComponent {
   @Input() isVisible!: boolean;
-  @Input() winningMessage!: string;
+  @Input() primaryMessage!: string;
+  @Input() secondaryMessage!: string;
   @Input() nextState!: GameState;
 
   @Output() nextStateEvent: EventEmitter<GameState> =

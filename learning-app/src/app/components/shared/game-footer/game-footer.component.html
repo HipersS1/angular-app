@@ -1,5 +1,6 @@
-<div *ngIf="winningMessage" class="flex flex-col items-center">
-  <h1 class="text-2xl my-2">{{ winningMessage }}</h1>
+<div *ngIf="primaryMessage" class="flex flex-col items-center">
+  <h1 class="text-2xl my-2">{{ primaryMessage }}</h1>
+  <h2 *ngIf="secondaryMessage" class="text-1xl my-2">{{ secondaryMessage }}</h2>
   <p-button
     pButton
     label="{{ nextState }}"

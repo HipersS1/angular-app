@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
 import { BestOfMatchesComponent } from '../../shared/best-of-matches/best-of-matches.component';
 import { GameHeaderComponent } from '../../shared/game-header/game-header.component';
-import { GameState, PlayGroundSymbol } from '../../../types';
+import { GameState, PlayGroundSymbol, Count } from '../../../types';
 import { GameFooterComponent } from '../../shared/game-footer/game-footer.component';
 import { TimelineModule } from 'primeng/timeline';
 import { RoundHistoryComponent } from '../../shared/round-history/round-history.component';
@@ -44,13 +44,14 @@ export class TicTacToeComponent {
   isGameVisible: boolean = false;
   currentRound: number = 0;
   maxRounds: number = 0;
-  winningMessage: string = '';
+  primaryMessage: string = '';
+  secondaryMessage: string = '';
   nextState!: GameState;
 
   // Game logic
   isNextPlayerX: boolean = true;
   isPlayGroundDisabled: boolean = true;
-  roundHistory!: string[];
+  roundHistory: string[] = [];
 
   starNewGame(event: boolean) {
     this.isGameVisible = event;
@@ -58,19 +59,23 @@ export class TicTacToeComponent {
   }
 
   resetPlayGround() {
+    this.nextState = GameState.InProgress;
     this.playGroundSpaces = new Array(9).fill(null);
     this.roundHistory = new Array(this.maxRounds).fill('');
     this.isNextPlayerX = true;
     this.isPlayGroundDisabled = false;
     this.currentRound = 1;
-    this.winningMessage = '';
+    this.primaryMessage = '';
+    this.secondaryMessage = '';
   }
 
   nextPlayGround() {
+    this.nextState = GameState.InProgress;
     this.playGroundSpaces = new Array(9).fill(null);
     this.isPlayGroundDisabled = false;
     this.currentRound++;
-    this.winningMessage = '';
+    this.primaryMessage = '';
+    this.secondaryMessage = '';
   }
 
   selectPlayBox(i: number) {
@@ -81,6 +86,13 @@ export class TicTacToeComponent {
     this.playGroundSpaces[i] = this.getCurrentPlayer();
 
     this.checkWinningCondition();
+
+    if (
+      this.currentRound == this.maxRounds &&
+      this.nextState !== GameState.InProgress
+    ) {
+      this.secondaryMessage = this.getFinalRoundWinner();
+    }
 
     this.isNextPlayerX = !this.isNextPlayerX;
   }
@@ -100,9 +112,8 @@ export class TicTacToeComponent {
           this.playGroundSpaces[currentWinningLine[2]]
       ) {
         this.isPlayGroundDisabled = true;
-        this.winningMessage = `Player ${this.getCurrentPlayer()} won`;
+        this.primaryMessage = `Player ${this.getCurrentPlayer()} won the round`;
         this.roundHistory[this.currentRound - 1] = this.getCurrentPlayer();
-        this.getNextRoundState();
       }
     }
 
@@ -110,9 +121,11 @@ export class TicTacToeComponent {
       !this.isPlayGroundDisabled &&
       this.playGroundSpaces.every((pgs) => pgs)
     ) {
-      this.winningMessage = 'Players tied';
+      this.primaryMessage = 'Players tied';
       this.roundHistory[this.currentRound - 1] = 'Tie';
     }
+
+    this.getNextRoundState();
   }
 
   setNextState($event: GameState) {
@@ -139,5 +152,26 @@ export class TicTacToeComponent {
     } else {
       this.nextState = GameState.NextGame;
     }
+  }
+
+  getFinalRoundWinner(): string {
+    const count: Count = this.roundHistory.reduce(
+      (accumulator: Count, currentValue: string) => {
+        accumulator[currentValue] = (accumulator[currentValue] || 0) + 1;
+        return accumulator;
+      },
+      {} as Count
+    );
+
+    const maxKey = Object.keys(count).reduce((a, b) =>
+      count[a] > count[b] ? a : b
+    );
+
+    console.log(maxKey);
+    if (count['X'] === count['O'] || maxKey === 'Tie') {
+      return 'Game is tied';
+    }
+
+    return `Player ${maxKey} won the game`;
   }
 }
